@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=], initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <title>Document</title>
+    <style>
+        #map {
+            box-shadow: 7px 7px 7px gray;
+            border-radius: 20px;
+            margin: 11% 25%;
+            height: 361px;
+            width: 702px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var marker = L.marker([51.5, -0.09]).addTo(map);
+        var circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map);
+
+        var polygon = L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map);
+
+        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+        circle.bindPopup("I am a circle.");
+        polygon.bindPopup("I am a polygon.");
+
+        var popup = L.popup()
+            .setLatLng([51.513, -0.09])
+            .setContent("I am a standalone popup.")
+            .openOn(map);
+
+        function onMapClick(e) {
+            alert("You clicked the map at " + e.latlng);
+        }
+
+        map.on('click', onMapClick);
+
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+        }
+
+        map.on('click', onMapClick);
+
+        // Obter a localização do usuário usando a API de Geolocalização do navegador
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var userLatitude = position.coords.latitude;
+            var userLongitude = position.coords.longitude;
+
+            // Configurar o controle de rota com os waypoints
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(userLatitude, userLongitude),  // Latitude e Longitude capturada no navegador do usuário
+                    L.latLng(-23.553908230015924, -46.31371871075227)  // Latitude e Longitude do Senai Suzano
+                ]
+            }).addTo(map);
+        }, function (error) {
+            console.error('Erro ao obter a localização do usuário:', error);
+            // Se ocorrer um erro ao obter a localização do usuário, você pode tratar aqui.
+        }, { enableHighAccuracy: true });
+
+    </script>
+</body>
+
+
+
+
+</html>
